@@ -9,7 +9,7 @@
             </el-option>
           </el-select>
         </el-col>
-        
+
         <el-col :span="3">
           <el-select v-model="form1.name" placeholder="请选择楼号">
             <el-option v-for="item in list" :key="item.pid" :label="item.buildNo" :value="item.pid">
@@ -948,7 +948,9 @@ export default {
     },
 
     // 导入 Excel
-    uploadExcel() {},
+    uploadExcel() {
+      this.$router.push("/excel");
+    },
 
     // 导出 Excel
     downloadExcel() {},

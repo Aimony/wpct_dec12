@@ -171,6 +171,16 @@ export const constantRouterMap = [
     ]
   },
 
+  {
+    path: '/excel',
+    component: Layout,
+    hidden: true, // 不显示到左侧菜单
+    children: [{
+      path: '',
+      component: () => import('@/views/excel')
+    }]
+  },
+
 
   // {
   //   path: '/pool',
