@@ -41,6 +41,7 @@ router.beforeEach(async (to, from, next) => {
       if (true) {
         next()
       } else {
+        // FIXME 这啥bug？？？？
         try {
           // get user info
           await store.dispatch('user/getInfo')
