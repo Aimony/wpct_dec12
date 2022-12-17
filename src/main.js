@@ -27,6 +27,10 @@ import '@/permission' // permission control
 import UploadExcel from '@/components/index.js'
 Vue.use(UploadExcel)
 
+// 使用 vue-json-excel
+import JsonExcel from 'vue-json-excel'
+Vue.component('downloadExcel', JsonExcel)
+
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

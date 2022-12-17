@@ -42,9 +42,23 @@
           </div>
         </el-col>
       </el-row>
-      <el-button type="primary" size="small" @click="showAdd" v-premission="'build:add'" style="margin-right:30px">新增</el-button>
-      <el-button type="danger" size="small" @click="uploadExcel">导入excel</el-button>
-      <el-button type="success" size="small" @click="downloadExcel">导出excel</el-button>
+
+      <el-row :gutter="20">
+        <el-col :span="2">
+          <el-button type="primary" size="small" @click="showAdd" v-premission="'build:add'" style="margin-right:30px">新增</el-button>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="danger" size="small" @click="uploadExcel">导入excel</el-button>
+        </el-col>
+        <el-col :span="2">
+          <download-excel class="export-excel-wrapper" :data="list" :fields="excelFields" name="房屋信息表.xls">
+            <el-button type="success" size="small">导出excel</el-button>
+          </download-excel>
+        </el-col>
+      </el-row>
+
+      <!-- <el-button type="success" size="small" @click="downloadExcel">导出excel</el-button> -->
+
     </div>
     <!-- v-premission="'build:list'" -->
     <el-table :data="list" fit highlight-current-row>
@@ -721,6 +735,47 @@ export default {
         // ],
         //#endregion
       },
+
+      // Excel导出配置
+      excelFields: {
+        小区名称: "villageName",
+        小区楼号: "buildNo",
+        小区房号: "roomNo",
+        姓名: "name",
+        手机号码: "number",
+        身份证: "pid",
+        户口所在地: "resident",
+        保障类型: "guaranteeType",
+        车辆型号: "car",
+        与房屋关系: "relation",
+        符合条件人数: "conditionNumber",
+        其中低保人数: "personNumber",
+        面积核准单价: "areaFee",
+        核准面积: "limitArea",
+        超出面积: "overArea",
+        超出面积单价: "overareaFee",
+        物业单价: "property",
+        物业费: "propertyFee ",
+        押金: "deposit",
+        公摊水费: "waterFee",
+        公摊电费: "electricity",
+        气费: "gasFee",
+        停车费: "carFee",
+        车位号1: "parking1",
+        车位号2: "parking2",
+        其他费用: "otherFee",
+        收回不符合条件疫情减免金额: "afee",
+        收回不符合条件租金: "bfee",
+        应收应退租金: "cfee",
+        应收应退物业费: "dfee",
+        优惠: "discount",
+        备注: "remarks",
+
+        支付开始时间: "payBeginTime",
+        支付结束时间: "payEndTime",
+        操作人员记录: "updateUser",
+        订单号: "orderNo",
+      },
     };
   },
   created() {
@@ -952,8 +1007,6 @@ export default {
       this.$router.push("/excel");
     },
 
-    // 导出 Excel
-    downloadExcel() {},
     changePage() {
       this.getList();
     },
