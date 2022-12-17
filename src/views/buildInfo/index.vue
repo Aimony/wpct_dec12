@@ -3,14 +3,21 @@
     <div class="header" style="margin: 10px">
       <!-- 顶栏区域 -->
       <el-row :gutter="30" style="margin-bottom:20px">
-        <el-col :span="5">
-          <el-select v-model="form1.name" placeholder="请选择小区楼号">
+        <el-col :span="3">
+          <el-select v-model="form1.name" placeholder="请选择小区">
             <el-option v-for="item in list" :key="item.pid" :label="item.villageName" :value="item.pid">
             </el-option>
           </el-select>
         </el-col>
+        
+        <el-col :span="3">
+          <el-select v-model="form1.name" placeholder="请选择楼号">
+            <el-option v-for="item in list" :key="item.pid" :label="item.buildNo" :value="item.pid">
+            </el-option>
+          </el-select>
+        </el-col>
 
-        <el-col :span="5">
+        <el-col :span="4">
           <el-select v-model="value" placeholder="请选择缴交状态">
             <el-option v-for="item in payStateOption" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
@@ -30,11 +37,14 @@
 
         <el-col :span="4">
           <div class="search">
-            <el-button type="primary" @click="search">筛选</el-button>
+            <el-button @click="search">重置</el-button>
+            <el-button type="primary" @click="search">搜索</el-button>
           </div>
         </el-col>
       </el-row>
-      <el-button type="primary" @click="showAdd" v-premission="'build:add'">新增</el-button>
+      <el-button type="primary" size="small" @click="showAdd" v-premission="'build:add'" style="margin-right:30px">新增</el-button>
+      <el-button type="danger" size="small" @click="uploadExcel">导入excel</el-button>
+      <el-button type="success" size="small" @click="downloadExcel">导出excel</el-button>
     </div>
     <!-- v-premission="'build:list'" -->
     <el-table :data="list" fit highlight-current-row>
@@ -579,9 +589,9 @@ export default {
           property: 0, //物业单价
           propertyFee: 0, //物业费
           waterFee: 0, //公摊水费
-          parking1: "",// 停车位 1   // TODO 后台添加字段
-          parking2: "",// 停车位 2   // TODO 后台添加字段
-          otherFee: 0,// 其他费用    // TODO 后台添加字段
+          parking1: "", // 停车位 1   // TODO 后台添加字段
+          parking2: "", // 停车位 2   // TODO 后台添加字段
+          otherFee: 0, // 其他费用    // TODO 后台添加字段
         },
       },
       addVisable: false,
@@ -936,6 +946,12 @@ export default {
           });
         });
     },
+
+    // 导入 Excel
+    uploadExcel() {},
+
+    // 导出 Excel
+    downloadExcel() {},
     changePage() {
       this.getList();
     },
