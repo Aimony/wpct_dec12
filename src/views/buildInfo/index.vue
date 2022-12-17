@@ -1,6 +1,41 @@
 <template>
   <div>
     <div class="header" style="margin: 10px">
+      <!-- 顶栏区域 -->
+      <el-row :gutter="30" style="margin-bottom:20px">
+
+        <el-col :span="5">
+          <el-select v-model="form1.name" placeholder="请选择小区楼号">
+            <el-option v-for="item in list" :key="item.pid" :label="item.villageName" :value="item.pid">
+            </el-option>
+          </el-select>
+        </el-col>
+
+        <el-col :span="5">
+          <el-select v-model="value" placeholder="请选择缴交状态">
+            <el-option v-for="item in payStateOption" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-col>
+
+        <el-col :span="5">
+          <el-input v-model="list.name" placeholder="请输入姓名"></el-input>
+        </el-col>
+
+        <el-col :span="5">
+          <div class="block">
+            <el-date-picker v-model="value1" type="date" placeholder="选择日期">
+            </el-date-picker>
+          </div>
+        </el-col>
+
+        <el-col :span="4">
+          <div class="search">
+            <el-button type="primary" @click="search">筛选</el-button>
+          </div>
+        </el-col>
+
+      </el-row>
       <el-button type="primary" @click="showAdd" v-premission="'build:add'">新增</el-button>
     </div>
     <!-- v-premission="'build:list'" -->
@@ -31,12 +66,9 @@
       <el-table-column align="center" prop="consumption.monthCost" label="合计待缴" width="220" />
       <el-table-column align="center" label="详情">
         <template slot-scope="scope">
-          <el-button type="text" size="small" icon="el-icon-tickets" @click="showDetail(scope.row)"
-            v-premission="'build:list'">查看</el-button>
-          <el-button type="text" size="small" icon="el-icon-edit" @click="showChange(scope.row)"
-            v-premission="'build:update'">修改</el-button>
-          <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.row)"
-            v-premission="'build:remove'">删除</el-button>
+          <el-button type="text" size="small" icon="el-icon-tickets" @click="showDetail(scope.row)" v-premission="'build:list'">查看</el-button>
+          <el-button type="text" size="small" icon="el-icon-edit" @click="showChange(scope.row)" v-premission="'build:update'">修改</el-button>
+          <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.row)" v-premission="'build:remove'">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -293,14 +325,14 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item label="身份证号" prop="pid">
-            <el-input v-model="form1.pid" placeholder="请输入身份证" />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="12">
           <el-form-item label="联系电话" prop="number">
             <el-input v-model="form1.number" placeholder="请输入联系电话" />
+          </el-form-item>
+        </el-col>
+        
+        <el-col :span="12">
+          <el-form-item label="身份证号" prop="pid">
+            <el-input v-model="form1.pid" placeholder="请输入身份证" />
           </el-form-item>
         </el-col>
 
@@ -313,12 +345,12 @@
         <el-col :span="12">
           <el-form-item label="保障类型" prop="guaranteeType">
             <el-select v-model="form1.guaranteeType" placeholder="请选择保障类型">
-              <el-option label="公共租赁住房" value="公共租赁住房" />
-              <el-option label="廉租住房" value="廉租住房" />
-              <el-option label="商品住房" value="商品住房" />
-              <el-option label="安置住房" value="安置住房" />
-              <el-option label="店面" value="店面" />
-              <el-option label="不符合条件" value="不符合条件" />
+              <!-- <el-option label="公共租赁住房" value="公共租赁住房" /> -->
+              <!-- <el-option label="廉租住房" value="廉租住房" /> -->
+              <el-option label="商品房" value="商品房" />
+              <el-option label="安置房" value="安置房" />
+              <!-- <el-option label="店面" value="店面" /> -->
+              <!-- <el-option label="不符合条件" value="不符合条件" /> -->
             </el-select>
           </el-form-item>
         </el-col>
@@ -399,13 +431,13 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item label="水费" prop="consumption.waterFee">
+          <el-form-item label="公摊水费" prop="consumption.waterFee">
             <el-input v-model.number="form1.consumption.waterFee" type="number" placeholder="请输入水费" />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
-          <el-form-item label="电费" prop="consumption.electricity">
+          <el-form-item label="公摊电费" prop="consumption.electricity">
             <el-input v-model="form1.consumption.electricity" type="number" placeholder="请输入电费" />
           </el-form-item>
         </el-col>
@@ -423,8 +455,7 @@
         </el-col>
 
         <el-col :span="24">
-          <el-form-item type="number" label="收回不符合条件疫情减免金额" label-width="auto" style="margin-left: 60px"
-            prop="consumption.afee">
+          <el-form-item type="number" label="收回不符合条件疫情减免金额" label-width="auto" style="margin-left: 60px" prop="consumption.afee">
             <el-input v-model="form1.consumption.afee" type="number" placeholder="请输入收回不符合条件疫情减免金额" />
           </el-form-item>
         </el-col>
@@ -442,8 +473,7 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item type="number" label="应收应退物业费" label-width="auto" style="margin-left: 60px"
-            prop="consumption.dfee">
+          <el-form-item type="number" label="应收应退物业费" label-width="auto" style="margin-left: 60px" prop="consumption.dfee">
             <el-input v-model="form1.consumption.dfee" type="number" placeholder="请输入应收应退物业费" />
           </el-form-item>
         </el-col>
@@ -466,7 +496,9 @@
         <el-button type="primary" @click="submit">{{ btn }}</el-button>
       </div>
     </el-dialog>
+
     <Pagination :total="total" :page.sync="page" :page-size="pageSize" @change="changePage" />
+
     <div style="padding: 20px" class="pagePosition">
       <el-row>
         <el-button size="medium" type="primary" style="width: 100px" @click="backMouth">上一月</el-button>
@@ -478,8 +510,8 @@
 </template>
 
 <script>
-import { getList, deleteRow, updateRow, addRow } from '@/api/buildinfo'
-import Pagination from '@/components/Pagination/index.vue'
+import { getList, deleteRow, updateRow, addRow } from "@/api/buildinfo";
+import Pagination from "@/components/Pagination/index.vue";
 export default {
   components: {
     Pagination,
@@ -492,186 +524,192 @@ export default {
       form: {
         consumption: {},
       },
-      labelWidth: '120px',
+      labelWidth: "120px",
       form1: {
-        buildNo: '',
-        car: '',
-        conditionNumber: '',
-        guaranteeType: '',
-        name: '',
-        number: '',
-        personNumber: '',
-        pid: '',
-        remarks: '',
-        resident: '',
-        roomNo: '',
-        villageName: '',
-        relation: '',
+        buildNo: "",
+        car: "",
+        conditionNumber: "",
+        guaranteeType: "",
+        name: "",
+        number: "",
+        personNumber: "",
+        pid: "",
+        remarks: "",
+        resident: "",
+        roomNo: "",
+        villageName: "",
+        relation: "",
         consumption: {
-          afee: '',
-          area: '',
-          areaFee: '',
-          bfee: '',
-          carFee: '',
-          cfee: '',
-          deposit: '',
-          dfee: '',
-          discount: '',
-          electricity: '',
-          gasFee: '',
-          limitArea: '',
-          monthCost: '',
-          overArea: '',
-          overareaFee: '',
-          property: '',
-          propertyFee: '',
-          waterFee: '',
+          afee: 0, //收回不符合条件疫情减免金额
+          area: "",
+          areaFee: 0, // 面积核准单价
+          bfee: 0, //收回不符合条件租金
+          carFee: 0, // 停车费
+          cfee: 0, //应收应退租金
+          deposit: 0, //押金
+          dfee: 0, //应收应退物业费
+          discount: "",
+          electricity: 0, //公摊电费
+          gasFee: 0, //气费
+          limitArea: "",
+          monthCost: "",
+          overArea: "",
+          overareaFee: 0, // 超出面积单价
+          property: 0, //物业单价
+          propertyFee: 0, //物业费
+          waterFee: 0, //公摊水费
         },
       },
       addVisable: false,
       total: 0,
       page: 1,
       pageSize: 5,
-      title: '',
-      btn: '',
-      carOption: [
+      title: "",
+      btn: "",
+      // 缴交状态
+      payStateOption: [
         {
-          value: '汽车',
-          label: '汽车',
+          value: "已缴交",
+          label: "已缴交",
         },
         {
-          value: '摩托车',
-          label: '摩托车',
+          value: "未缴交",
+          label: "未缴交",
         },
       ],
+      carOption: [
+        {
+          value: "汽车",
+          label: "汽车",
+        },
+        {
+          value: "摩托车",
+          label: "摩托车",
+        },
+      ],
+      // 与房屋关系
       houseOption: [
         {
-          value: '户主',
-          label: '户主',
+          value: "户主",
+          label: "户主",
         },
         {
-          value: '亲属',
-          label: '亲属',
-        },
-        {
-          value: '租户',
-          label: '租户',
-        },
-        {
-          value: '其他',
-          label: '其他',
+          value: "租户",
+          label: "租户",
         },
       ],
       rules: {
         villageName: [
-          { required: true, message: '请输入小区名', trigger: 'blur' },
+          { required: true, message: "请输入小区名", trigger: "blur" },
         ],
-        buildNo: [{ required: true, message: '请输入楼号', trigger: 'blur' }],
-        roomNo: [{ required: true, message: '请输入房号', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
-        pid: [{ required: true, message: '请输入身份证号', trigger: 'blur' }],
+        buildNo: [{ required: true, message: "请输入楼号", trigger: "blur" }],
+        roomNo: [{ required: true, message: "请输入房号", trigger: "blur" }],
+        name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
         number: [
-          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { required: true, message: "请输入手机号码", trigger: "blur" },
         ],
-        resident: [
-          { required: true, message: '请输入户口所在地', trigger: 'blur' },
-        ],
-        guaranteeType: [
-          { required: true, message: '请输入保障类型', trigger: 'blur' },
-        ],
-        car: [{ required: true, message: '请输入车辆型号', trigger: 'blur' }],
-        conditionNumber: [
-          { required: true, message: '请输入符合条件人数', trigger: 'blur' },
-        ],
-        personNumber: [
-          { required: true, message: '请输入其中低保人数', trigger: 'blur' },
-        ],
-        relation: [
-          { required: true, message: '请输入其中低保人数', trigger: 'blur' },
-        ],
-        'consumption.areaFee': [
-          { required: true, message: '请输入面积核准单价', trigger: 'blur' },
-        ],
-        'consumption.area': [
-          { required: true, message: '请输入面积', trigger: 'blur' },
-        ],
-        'consumption.limitArea': [
-          { required: true, message: '请输入核准面积', trigger: 'blur' },
-        ],
-        'consumption.overArea': [
-          { required: true, message: '请输入超出面积', trigger: 'blur' },
-        ],
-        'consumption.overareaFee': [
-          { required: true, message: '请输入超出面积单价', trigger: 'blur' },
-        ],
-        'consumption.property': [
-          { required: true, message: '请输入物业单价', trigger: 'blur' },
-        ],
-        'consumption.propertyFee': [
-          { required: true, message: '请输入物业费', trigger: 'blur' },
-        ],
-        'consumption.deposit': [
-          { required: true, message: '请输入押金', trigger: 'blur' },
-        ],
-        'consumption.waterFee': [
-          { required: true, message: '请输入水费', trigger: 'blur' },
-        ],
-        'consumption.electricity': [
-          { required: true, message: '请输入电费', trigger: 'blur' },
-        ],
-        'consumption.gasFee': [
-          { required: true, message: '请输入气费', trigger: 'blur' },
-        ],
-        'consumption.carFee': [
-          { required: true, message: '请输入停车费', trigger: 'blur' },
-        ],
-        'consumption.afee': [
-          {
-            required: true,
-            message: '请输入收回不符合条件疫情减免金额',
-            trigger: 'blur',
-          },
-        ],
-        'consumption.bfee': [
-          {
-            required: true,
-            message: '请输入收回不符合条件租金',
-            trigger: 'blur',
-          },
-        ],
-        'consumption.cfee': [
-          { required: true, message: '请输入应收应退租金', trigger: 'blur' },
-        ],
-        'consumption.dfee': [
-          { required: true, message: '请输入应收应退物业费', trigger: 'blur' },
-        ],
-        'consumption.discount': [
-          { required: true, message: '请输入优惠', trigger: 'blur' },
-        ],
+        //#region
+        // pid: [{ required: true, message: "请输入身份证号", trigger: "blur" }],
+        // resident: [
+        //   { required: true, message: "请输入户口所在地", trigger: "blur" },
+        // ],
+        // guaranteeType: [
+        //   { required: true, message: "请输入保障类型", trigger: "blur" },
+        // ],
+        // car: [{ required: true, message: "请输入车辆型号", trigger: "blur" }],
+        // conditionNumber: [
+        //   { required: true, message: "请输入符合条件人数", trigger: "blur" },
+        // ],
+        // personNumber: [
+        //   { required: true, message: "请输入其中低保人数", trigger: "blur" },
+        // ],
+        // relation: [
+        //   { required: true, message: "请输入其中低保人数", trigger: "blur" },
+        // ],
+        // "consumption.areaFee": [
+        //   { required: true, message: "请输入面积核准单价", trigger: "blur" },
+        // ],
+        // "consumption.area": [
+        //   { required: true, message: "请输入面积", trigger: "blur" },
+        // ],
+        // "consumption.limitArea": [
+        //   { required: true, message: "请输入核准面积", trigger: "blur" },
+        // ],
+        // "consumption.overArea": [
+        //   { required: true, message: "请输入超出面积", trigger: "blur" },
+        // ],
+        // "consumption.overareaFee": [
+        //   { required: true, message: "请输入超出面积单价", trigger: "blur" },
+        // ],
+        // "consumption.property": [
+        //   { required: true, message: "请输入物业单价", trigger: "blur" },
+        // ],
+        // "consumption.propertyFee": [
+        //   { required: true, message: "请输入物业费", trigger: "blur" },
+        // ],
+        // "consumption.deposit": [
+        //   { required: true, message: "请输入押金", trigger: "blur" },
+        // ],
+        // "consumption.waterFee": [
+        //   { required: true, message: "请输入水费", trigger: "blur" },
+        // ],
+        // "consumption.electricity": [
+        //   { required: true, message: "请输入电费", trigger: "blur" },
+        // ],
+        // "consumption.gasFee": [
+        //   { required: true, message: "请输入气费", trigger: "blur" },
+        // ],
+        // "consumption.carFee": [
+        //   { required: true, message: "请输入停车费", trigger: "blur" },
+        // ],
+        // "consumption.afee": [
+        //   {
+        //     required: true,
+        //     message: "请输入收回不符合条件疫情减免金额",
+        //     trigger: "blur",
+        //   },
+        // ],
+        // "consumption.bfee": [
+        //   {
+        //     required: true,
+        //     message: "请输入收回不符合条件租金",
+        //     trigger: "blur",
+        //   },
+        // ],
+        // "consumption.cfee": [
+        //   { required: true, message: "请输入应收应退租金", trigger: "blur" },
+        // ],
+        // "consumption.dfee": [
+        //   { required: true, message: "请输入应收应退物业费", trigger: "blur" },
+        // ],
+        // "consumption.discount": [
+        //   { required: true, message: "请输入优惠", trigger: "blur" },
+        // ],
+        //#endregion
       },
-    }
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     resetForm() {
-      this.$refs['form'].resetFields()
+      this.$refs["form"].resetFields();
     },
     backMouth() {
       if (this.month <= 1) {
-        return this.$message.error('已经最小月份' + this.month + '月了')
+        return this.$message.error("已经最小月份" + this.month + "月了");
       } else {
-        this.month--
-        this.getList()
+        this.month--;
+        this.getList();
       }
     },
     nextMouth() {
       if (this.month >= 12) {
-        return this.$message.error('已经最大月份' + this.month + '月了')
+        return this.$message.error("已经最大月份" + this.month + "月了");
       } else {
-        this.month++
-        this.getList()
+        this.month++;
+        this.getList();
       }
     },
 
@@ -679,111 +717,112 @@ export default {
       const res = await getList({
         pageNum: this.page,
         month: this.month,
-      })
-      this.list = res.data.data.list
-      this.total = res.data.data.total
+      });
+      console.log(res);
+      this.list = res.data.data.list;
+      this.total = res.data.data.total;
     },
     showDetail(row) {
-      this.tableVisable = true
-      this.form = row
-      console.log(row)
+      this.tableVisable = true;
+      this.form = row;
+      console.log(row);
     },
     closeDialog() {
-      this.tableVisable = false
+      this.tableVisable = false;
     },
     closeAdd() {
       (this.form1 = {
-        buildNo: '',
-        car: '',
-        conditionNumber: '',
-        guaranteeType: '',
-        name: '',
-        number: '',
-        personNumber: '',
-        pid: '',
-        remarks: '',
-        resident: '',
-        roomNo: '',
-        villageName: '',
-        relation: '',
+        buildNo: "",
+        car: "",
+        conditionNumber: "",
+        guaranteeType: "",
+        name: "",
+        number: "",
+        personNumber: "",
+        pid: "",
+        remarks: "",
+        resident: "",
+        roomNo: "",
+        villageName: "",
+        relation: "",
         consumption: {
-          afee: '',
-          area: '',
-          areaFee: '',
-          bfee: '',
-          carFee: '',
-          cfee: '',
-          deposit: '',
-          dfee: '',
-          discount: '',
-          electricity: '',
-          gasFee: '',
-          limitArea: '',
-          monthCost: '',
-          overArea: '',
-          overareaFee: '',
-          property: '',
-          propertyFee: '',
-          waterFee: '',
-          payinfoId: '',
-          buildId: '',
+          afee: "",
+          area: "",
+          areaFee: "",
+          bfee: "",
+          carFee: "",
+          cfee: "",
+          deposit: "",
+          dfee: "",
+          discount: "",
+          electricity: "",
+          gasFee: "",
+          limitArea: "",
+          monthCost: "",
+          overArea: "",
+          overareaFee: "",
+          property: "",
+          propertyFee: "",
+          waterFee: "",
+          payinfoId: "",
+          buildId: "",
         },
       }),
-        (this.addVisable = false)
+        (this.addVisable = false);
     },
     showAdd() {
-      this.title = '新增'
-      this.btn = '新 增'
-      this.addVisable = true
+      this.title = "新增";
+      this.btn = "新 增";
+      this.addVisable = true;
     },
     showChange(row) {
-      this.title = '修改'
-      this.btn = '修 改'
-      this.form1.villageName = row.villageName
-      this.form1.buildNo = row.buildNo
-      this.form1.roomNo = row.roomNo
-      this.form1.name = row.name
-      this.form1.pid = row.pid
-      this.form1.number = row.number
-      this.form1.guaranteeType = row.guaranteeType
-      this.form1.car = row.car
-      this.form1.resident = row.resident
-      this.form1.conditionNumber = row.conditionNumber
-      this.form1.personNumber = row.personNumber
-      this.form1.consumption.areaFee = row.consumption.areaFee
-      this.form1.consumption.area = row.consumption.area
-      this.form1.relation = row.relation
-      this.form1.consumption.limitArea = row.consumption.limitArea
-      this.form1.consumption.overArea = row.consumption.overArea
-      this.form1.consumption.overareaFee = row.consumption.overareaFee
-      this.form1.consumption.property = row.consumption.property
-      this.form1.consumption.propertyFee = row.consumption.propertyFee
-      this.form1.consumption.deposit = row.consumption.deposit
-      this.form1.consumption.waterFee = row.consumption.waterFee
-      this.form1.consumption.electricity = row.consumption.electricity
-      this.form1.consumption.gasFee = row.consumption.gasFee
-      this.form1.consumption.carFee = row.consumption.carFee
-      this.form1.consumption.afee = row.consumption.afee
-      this.form1.consumption.bfee = row.consumption.bfee
-      this.form1.consumption.cfee = row.consumption.cfee
-      this.form1.consumption.dfee = row.consumption.dfee
-      this.form1.consumption.discount = row.consumption.discount
-      this.form1.consumption.buildId = row.consumption.buildId
-      this.form1.payinfoId = row.payinfoId
-      this.form1.remarks = row.remarks
-      this.addVisable = true
+      this.title = "修改";
+      this.btn = "修 改";
+      this.form1.villageName = row.villageName;
+      this.form1.buildNo = row.buildNo;
+      this.form1.roomNo = row.roomNo;
+      this.form1.name = row.name;
+      this.form1.pid = row.pid;
+      this.form1.number = row.number;
+      this.form1.guaranteeType = row.guaranteeType;
+      this.form1.car = row.car;
+      this.form1.resident = row.resident;
+      this.form1.conditionNumber = row.conditionNumber;
+      this.form1.personNumber = row.personNumber;
+      this.form1.consumption.areaFee = row.consumption.areaFee;
+      this.form1.consumption.area = row.consumption.area;
+      this.form1.relation = row.relation;
+      this.form1.consumption.limitArea = row.consumption.limitArea;
+      this.form1.consumption.overArea = row.consumption.overArea;
+      this.form1.consumption.overareaFee = row.consumption.overareaFee;
+      this.form1.consumption.property = row.consumption.property;
+      this.form1.consumption.propertyFee = row.consumption.propertyFee;
+      this.form1.consumption.deposit = row.consumption.deposit;
+      this.form1.consumption.waterFee = row.consumption.waterFee;
+      this.form1.consumption.electricity = row.consumption.electricity;
+      this.form1.consumption.gasFee = row.consumption.gasFee;
+      this.form1.consumption.carFee = row.consumption.carFee;
+      this.form1.consumption.afee = row.consumption.afee;
+      this.form1.consumption.bfee = row.consumption.bfee;
+      this.form1.consumption.cfee = row.consumption.cfee;
+      this.form1.consumption.dfee = row.consumption.dfee;
+      this.form1.consumption.discount = row.consumption.discount;
+      this.form1.consumption.buildId = row.consumption.buildId;
+      this.form1.payinfoId = row.payinfoId;
+      this.form1.remarks = row.remarks;
+      this.addVisable = true;
     },
     submit() {
       // console.log(this.form)
-      this.$refs['form'].validate(async (valid) => {
+      this.$refs["form"].validate(async (valid) => {
         if (valid) {
           this.form1.consumption.monthCost =
             Number(this.form1.consumption.limitArea) *
-            Number(this.form1.consumption.areaFee) +
+              Number(this.form1.consumption.areaFee) +
             Number(this.form1.consumption.overArea) *
-            Number(this.form1.consumption.overareaFee) +
+              Number(this.form1.consumption.overareaFee) +
             Number(this.form1.consumption.property) *
-            Number(this.form1.consumption.area) +
+              Number(this.form1.consumption.area) +
             // Number(this.form1.consumption.deposit) +
             Number(this.form1.consumption.afee) +
             Number(this.form1.consumption.bfee) +
@@ -793,57 +832,57 @@ export default {
             Number(this.form1.consumption.electricity) +
             Number(this.form1.consumption.carFee) +
             Number(this.form1.consumption.gasFee) +
-            Number(this.form1.consumption.waterFee)
-          if (this.title === '修改') {
+            Number(this.form1.consumption.waterFee);
+          if (this.title === "修改") {
             await updateRow(this.form1).then(
               (res) => {
                 this.$message({
-                  type: 'success',
+                  type: "success",
                   message: res.data.data,
-                })
+                });
               },
               (err) => {
                 this.$message({
-                  type: 'error',
+                  type: "error",
                   message: res.data.data,
-                })
+                });
               }
-            )
-            this.closeAdd()
+            );
+            this.closeAdd();
           } else {
             // console.log(this.form1)
             await addRow(this.form1).then(
               (res) => {
                 this.$message({
-                  type: 'success',
+                  type: "success",
                   message: res.data.data,
-                })
+                });
               },
               (err) => {
                 this.$message({
-                  type: 'error',
+                  type: "error",
                   message: res.data.data,
-                })
+                });
               }
-            )
-            this.closeAdd()
+            );
+            this.closeAdd();
           }
-          this.getList()
+          this.getList();
           // console.log(this.form1.relation)
         } else {
-          return false
+          return false;
         }
-      })
+      });
     },
     handleClose() {
-      this.$refs['form'].resetFields()
-      this.addVisable = false
+      this.$refs["form"].resetFields();
+      this.addVisable = false;
     },
     async deleteRow(row) {
-      this.$confirm('是否确定删除?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
+      this.$confirm("是否确定删除?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
       })
         .then(async () => {
           await deleteRow({
@@ -852,32 +891,32 @@ export default {
           }).then(
             (res) => {
               this.$message({
-                type: 'success',
+                type: "success",
                 message: res.data.data,
-              })
+              });
             },
             (err) => {
               this.$message({
-                type: 'error',
+                type: "error",
                 message: res.data.data,
-              })
+              });
             }
-          )
+          );
           // console.log(results)
-          this.getList()
+          this.getList();
         })
         .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除',
-          })
-        })
+            type: "info",
+            message: "已取消删除",
+          });
+        });
     },
     changePage() {
-      this.getList()
+      this.getList();
     },
   },
-}
+};
 </script>
 
 <style lang="scss" scoped>
