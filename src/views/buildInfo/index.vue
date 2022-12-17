@@ -330,11 +330,11 @@
           </el-form-item>
         </el-col>
         
-        <el-col :span="12">
+        <!-- <el-col :span="12">
           <el-form-item label="身份证号" prop="pid">
             <el-input v-model="form1.pid" placeholder="请输入身份证" />
           </el-form-item>
-        </el-col>
+        </el-col> -->
 
         <el-col :span="12">
           <el-form-item label="户口所在地" prop="resident">
