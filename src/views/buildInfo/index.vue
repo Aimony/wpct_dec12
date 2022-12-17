@@ -3,7 +3,6 @@
     <div class="header" style="margin: 10px">
       <!-- 顶栏区域 -->
       <el-row :gutter="30" style="margin-bottom:20px">
-
         <el-col :span="5">
           <el-select v-model="form1.name" placeholder="请选择小区楼号">
             <el-option v-for="item in list" :key="item.pid" :label="item.villageName" :value="item.pid">
@@ -34,7 +33,6 @@
             <el-button type="primary" @click="search">筛选</el-button>
           </div>
         </el-col>
-
       </el-row>
       <el-button type="primary" @click="showAdd" v-premission="'build:add'">新增</el-button>
     </div>
@@ -73,6 +71,7 @@
       </el-table-column>
     </el-table>
 
+    <!-- 查看详情 -->
     <el-dialog title="详情" :visible.sync="tableVisable" width="55%" height="550px" top="5vh" :before-close="closeDialog">
       <el-form :model="form" label-width="100px">
         <el-col :span="12">
@@ -299,6 +298,7 @@
       </el-form>
     </el-dialog>
 
+    <!-- 新增 - 对话框 -->
     <el-dialog :title="title" :visible.sync="addVisable" width="70%" height="600px" top="5vh" :before-close="closeAdd">
       <el-form ref="form" :model="form1" :label-width="labelWidth" :rules="rules">
         <el-col :span="12">
@@ -329,7 +329,7 @@
             <el-input v-model="form1.number" placeholder="请输入联系电话" />
           </el-form-item>
         </el-col>
-        
+
         <!-- <el-col :span="12">
           <el-form-item label="身份证号" prop="pid">
             <el-input v-model="form1.pid" placeholder="请输入身份证" />
@@ -454,6 +454,25 @@
           </el-form-item>
         </el-col>
 
+        <!-- TODO 车位号接口 -->
+        <el-col :span="12">
+          <el-form-item label="车位号1" prop="parking1">
+            <el-input v-model="form1.consumption.parking1" type="number" placeholder="请输入车位号" />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="12">
+          <el-form-item label="车位号2" prop="parking2">
+            <el-input v-model="form1.consumption.parking2" type="number" placeholder="请输入车位号" />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="12">
+          <el-form-item label="其他费用" prop="otherFee">
+            <el-input v-model="form1.consumption.otherFee" type="number" placeholder="请输入其他费用" />
+          </el-form-item>
+        </el-col>
+
         <el-col :span="24">
           <el-form-item type="number" label="收回不符合条件疫情减免金额" label-width="auto" style="margin-left: 60px" prop="consumption.afee">
             <el-input v-model="form1.consumption.afee" type="number" placeholder="请输入收回不符合条件疫情减免金额" />
@@ -483,6 +502,7 @@
             <el-input v-model="form1.consumption.discount" type="number" placeholder="请输入优惠" />
           </el-form-item>
         </el-col>
+
         <div style="display: inline-block; margin-bottom: 20px; width: 50%">
           <el-form-item label="备注" prop="remarks">
             <el-input v-model="form1.remarks" placeholder="请输入备注" />
@@ -499,6 +519,7 @@
 
     <Pagination :total="total" :page.sync="page" :page-size="pageSize" @change="changePage" />
 
+    <!-- 底栏月份切换 -->
     <div style="padding: 20px" class="pagePosition">
       <el-row>
         <el-button size="medium" type="primary" style="width: 100px" @click="backMouth">上一月</el-button>
@@ -558,6 +579,9 @@ export default {
           property: 0, //物业单价
           propertyFee: 0, //物业费
           waterFee: 0, //公摊水费
+          parking1: "",// 停车位 1   // TODO 后台添加字段
+          parking2: "",// 停车位 2   // TODO 后台添加字段
+          otherFee: 0,// 其他费用    // TODO 后台添加字段
         },
       },
       addVisable: false,
