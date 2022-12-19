@@ -4,22 +4,24 @@
       <!-- 顶栏区域 -->
       <el-row :gutter="30" style="margin-bottom:20px">
         <el-col :span="3">
-          <el-select v-model="form1.name" placeholder="请选择小区">
+          <el-select v-model="form1.villageName" placeholder="请选择小区">
             <el-option v-for="item in list" :key="item.pid" :label="item.villageName" :value="item.pid">
             </el-option>
           </el-select>
         </el-col>
 
         <el-col :span="3">
-          <el-select v-model="form1.name" placeholder="请选择楼号">
+          <el-select v-model="form1.buildNo" placeholder="请选择楼号">
             <el-option v-for="item in list" :key="item.pid" :label="item.buildNo" :value="item.pid">
             </el-option>
           </el-select>
         </el-col>
 
+        <!-- TODO 缴交状态 payStatus 字段 -->
+        <!-- TODO 后台返回 payStateOption，这里先写死 -->
         <el-col :span="4">
-          <el-select v-model="value" placeholder="请选择缴交状态">
-            <el-option v-for="item in payStateOption" :key="item.value" :label="item.label" :value="item.value">
+          <el-select v-model="payStatus" placeholder="请选择缴交状态">
+            <el-option v-for="item in payStateOption" :key="item.id" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-col>
@@ -30,19 +32,20 @@
 
         <el-col :span="5">
           <div class="block">
-            <el-date-picker v-model="value1" type="date" placeholder="选择日期">
+            <el-date-picker v-model="choiceDate" type="date" placeholder="选择日期">
             </el-date-picker>
           </div>
         </el-col>
 
         <el-col :span="4">
-          <div class="search">
-            <el-button @click="search">重置</el-button>
+          <div class="menu">
+            <el-button @click="reset">重置</el-button>
             <el-button type="primary" @click="search">搜索</el-button>
           </div>
         </el-col>
       </el-row>
 
+      <!-- 新增信息、Excel操作 -->
       <el-row :gutter="20">
         <el-col :span="2">
           <el-button type="primary" size="small" @click="showAdd" v-premission="'build:add'" style="margin-right:30px">新增</el-button>
@@ -51,16 +54,15 @@
           <el-button type="danger" size="small" @click="uploadExcel">导入excel</el-button>
         </el-col>
         <el-col :span="2">
-          <download-excel class="export-excel-wrapper" :data="list" :fields="excelFields" name="房屋信息表.xls">
-            <el-button type="success" size="small">导出excel</el-button>
-          </download-excel>
+          <el-button type="success" size="small" @click="showExport">导出excel</el-button>
         </el-col>
       </el-row>
 
       <!-- <el-button type="success" size="small" @click="downloadExcel">导出excel</el-button> -->
-
     </div>
     <!-- v-premission="'build:list'" -->
+
+    <!-- 默认展示表格 -->
     <el-table :data="list" fit highlight-current-row>
       <el-table-column align="center" label="序号" width="80">
         <template slot-scope="scope">
@@ -75,16 +77,16 @@
           }}
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="name" label="姓名" width="140" />
+      <!-- <el-table-column align="center" prop="name" label="姓名" width="140" /> -->
       <el-table-column align="center" prop="guaranteeType" label="保障类型" width="220" />
-      <!-- <el-table-column align="center" label="缴交状况" width="160">
+      <el-table-column align="center" label="缴交状态" width="90">
         <template slot-scope="scope">
           <el-tag :type="scope.row.payStatus == '未缴' ? 'danger' : 'success'">
             {{ scope.row.payStatus }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="updateTime" label="已缴纳日期" width="200" /> -->
+      <el-table-column align="center" prop="updateTime" label="已缴纳日期" width="160" />
       <el-table-column align="center" prop="consumption.monthCost" label="合计待缴" width="220" />
       <el-table-column align="center" label="详情">
         <template slot-scope="scope">
@@ -367,8 +369,8 @@
         </el-col>
 
         <el-col :span="12">
-          <el-form-item label="保障类型" prop="guaranteeType">
-            <el-select v-model="form1.guaranteeType" placeholder="请选择保障类型">
+          <el-form-item label="房屋类型" prop="guaranteeType">
+            <el-select v-model="form1.guaranteeType" placeholder="请选择房屋类型">
               <!-- <el-option label="公共租赁住房" value="公共租赁住房" /> -->
               <!-- <el-option label="廉租住房" value="廉租住房" /> -->
               <el-option label="商品房" value="商品房" />
@@ -408,8 +410,8 @@
         </el-col>
 
         <el-col v-if="form.consumption" :span="12">
-          <el-form-item label="面积核准单价" prop="consumption.areaFee">
-            <el-input v-model="form1.consumption.areaFee" placeholder="请输入面积核准单价" type="number" />
+          <el-form-item label="租金" prop="consumption.areaFee">
+            <el-input v-model="form1.consumption.areaFee" placeholder="请输入租金" type="number" />
           </el-form-item>
         </el-col>
 
@@ -478,6 +480,12 @@
           </el-form-item>
         </el-col>
 
+        <el-col :span="12">
+          <el-form-item label="其他费用" prop="otherFee">
+            <el-input v-model="form1.consumption.otherFee" type="number" placeholder="请输入其他费用" />
+          </el-form-item>
+        </el-col>
+
         <!-- TODO 车位号接口 -->
         <el-col :span="12">
           <el-form-item label="车位号1" prop="parking1">
@@ -488,12 +496,6 @@
         <el-col :span="12">
           <el-form-item label="车位号2" prop="parking2">
             <el-input v-model="form1.consumption.parking2" type="number" placeholder="请输入车位号" />
-          </el-form-item>
-        </el-col>
-
-        <el-col :span="12">
-          <el-form-item label="其他费用" prop="otherFee">
-            <el-input v-model="form1.consumption.otherFee" type="number" placeholder="请输入其他费用" />
           </el-form-item>
         </el-col>
 
@@ -541,6 +543,22 @@
       </div>
     </el-dialog>
 
+    <!-- Excel按需导出 - 对话框 -->
+    <el-dialog title="导出选项" :visible.sync="exportVisable" width="70%" height="600px" top="5vh">
+      <el-checkbox-group v-model="checkField">
+        <el-checkbox label="复选框 A"></el-checkbox>
+        <el-checkbox label="复选框 B"></el-checkbox>
+        <el-checkbox label="复选框 C"></el-checkbox>
+      </el-checkbox-group>
+
+      <div slot="footer">
+        <el-button size="small" @click="cancelExport">取 消</el-button>
+        <download-excel class="export-excel-wrapper" :data="list" :fields="excelFields" name="房屋信息表.xls">
+          <el-button type="success" size="small" @click="showExport">导出excel</el-button>
+        </download-excel>
+      </div>
+    </el-dialog>
+
     <Pagination :total="total" :page.sync="page" :page-size="pageSize" @change="changePage" />
 
     <!-- 底栏月份切换 -->
@@ -571,7 +589,7 @@ export default {
       },
       labelWidth: "120px",
       form1: {
-        buildNo: "",
+        buildNo: "",// 楼号
         car: "",
         conditionNumber: "",
         guaranteeType: "",
@@ -581,13 +599,15 @@ export default {
         pid: "",
         remarks: "",
         resident: "",
-        roomNo: "",
-        villageName: "",
+        roomNo: "",// 房号
+        villageName: "",// 小区
         relation: "",
+        payStatus: "", // TODO 新增字段
+        choiceDate: "", // 选择的日期
         consumption: {
           afee: 0, //收回不符合条件疫情减免金额
           area: "",
-          areaFee: 0, // 面积核准单价
+          areaFee: 0, // 面积核准单价（租金）
           bfee: 0, //收回不符合条件租金
           carFee: 0, // 停车费
           cfee: 0, //应收应退租金
@@ -603,12 +623,14 @@ export default {
           property: 0, //物业单价
           propertyFee: 0, //物业费
           waterFee: 0, //公摊水费
-          parking1: "", // 停车位 1   // TODO 后台添加字段
+          parking1: "", // 停车位 1   // TODO 后台添加字段 
           parking2: "", // 停车位 2   // TODO 后台添加字段
           otherFee: 0, // 其他费用    // TODO 后台添加字段
         },
       },
       addVisable: false,
+      exportVisable: false, // 导出
+      checkField:[],    // 选择导出的字段
       total: 0,
       page: 1,
       pageSize: 5,
@@ -617,10 +639,12 @@ export default {
       // 缴交状态
       payStateOption: [
         {
+          id:0,
           value: "已缴交",
           label: "已缴交",
         },
         {
+          id:1,
           value: "未缴交",
           label: "未缴交",
         },
@@ -1005,6 +1029,31 @@ export default {
     // 导入 Excel
     uploadExcel() {
       this.$router.push("/excel");
+    },
+    // 导出 Excel
+    showExport() {
+      this.exportVisable = true;
+    },
+    // 导出Excel - 对话框 - 取消
+    cancelExport() {
+      this.exportVisable = false;
+    },
+
+    // 重置
+    reset(){
+      console.log('reset')
+      console.log(this.form1);
+      this.form1.villageName = ""
+      this.form1.buildNo = ""
+      this.form1.payStatus = ""
+      this.list.name = ""
+
+
+    },
+    // 筛选
+    search(){
+      console.log('search')
+      this.getList()
     },
 
     changePage() {
