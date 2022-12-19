@@ -8,6 +8,15 @@
       style="text-align:center"
       @current-change="handleCurrentChange"
     />
+    <!-- <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page="page"
+      :page-sizes="pageSize"
+      :page-size="100"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+      style="text-align:center">
+    </el-pagination> -->
   </div>
 </template>
 
