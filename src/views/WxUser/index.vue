@@ -9,19 +9,24 @@
 <template>
   <div class="container">
     <div>
-      <el-table :data="newArr"  fit highlight-current-row height="600px" v-premission="'weixin:list'">
+      <!-- 表格数据 -->
+      <el-table :data="newArr" fit highlight-current-row height="600px" v-premission="'weixin:list'">
         <el-table-column align="center" label="序号">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
+        <el-table-column align="center" prop="villageName" label="小区" width="120"></el-table-column>
         <el-table-column align="center" prop="buildNo" label="楼号" width="120"></el-table-column>
         <el-table-column align="center" prop="roomNo" label="房号" width="100"></el-table-column>
         <el-table-column align="center" prop="name" label="姓名" width="120"></el-table-column>
         <el-table-column align="center" prop="number" label="电话" width="160"></el-table-column>
-        <el-table-column align="center" prop="nickname" label="昵称" style="width: 60px;"></el-table-column>
+        <el-table-column align="center" prop="nickname" label="昵称" style="width: 60px"></el-table-column>
         <el-table-column align="center" prop="openid" label="openid" width="280"></el-table-column>
       </el-table>
-
     </div>
+
+    <!-- 分页器 -->
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.pageNum" :page-size="listQuery.pageRow" :page-sizes="[5, 10, 15, 20]" layout="total, sizes, prev, pager, next, jumper" :total="100" />
+    
   </div>
 </template>
 
@@ -64,7 +69,7 @@ export default {
             overareaFee: 0,
             property: 0,
             propertyFee: 0,
-            waterFee: 0
+            waterFee: 0,
           },
           guaranteeType: "string",
           name: "string",
@@ -94,24 +99,26 @@ export default {
                 orderNo: "string",
                 relation: "string",
                 roomNo: "string",
-                villageName: "string"
-              }
+                villageName: "string",
+              },
             ],
             id: 0,
             name: "string",
             nickname: "string",
             number: "string",
             openid: "string",
-            pid: "string"
-          }
-        }
+            pid: "string",
+          },
+        },
       },
     };
   },
   methods: {
     // 获取微信用户展示列表
+    // TODO 后端返回 total  or     重写 ？
     async getList() {
       const res = await getWeixinlistAPI();
+      console.log(res);
       const datalist = res.data;
       const { data1: binfo } = datalist; // 用户信息
       const { data2: uinfo } = datalist; // 用户房屋信息
@@ -122,9 +129,16 @@ export default {
           ...data,
         };
       });
-      // console.log(this.newArr);
+      console.log(this.newArr);
     },
-
+    // （每页）条数 改变时
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    // 页数 改变时
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+    },
   },
   mounted() {
     this.getList();
