@@ -9,7 +9,7 @@
       <el-table-column align="center" prop="residence" label="小区楼号房号" width="175">
         <template slot-scope="scope">
           {{
-              `${scope.row.villageName}${scope.row.buildNo}号楼${scope.row.roomNo}号`
+            `${scope.row.villageName}${scope.row.buildNo}号楼${scope.row.roomNo}号`
           }}
         </template>
       </el-table-column>
@@ -35,7 +35,8 @@
       </el-table-column>
     </el-table>
 
-    <el-pagination layout="total,prev, pager, next" style="text-align: center" :total="total" @current-change="handleCurrentChange" :current-page.sync="pageNum" :page-size="pageSize" />
+    <!-- <el-pagination layout="total,prev, pager, next" style="text-align: center" :total="total" @current-change="handleCurrentChange" :current-page.sync="pageNum" :page-size="pageSize" /> -->
+    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNum" :page-size="pageSize" :page-sizes="[5, 10, 15, 20]" layout="total, sizes, prev, pager, next, jumper" :total="100" style="text-align: center" />
 
     <settleDialog :dialog-visible.sync="dialogVisible" @submitSettle="submitSettle" />
 
@@ -44,23 +45,23 @@
       <el-form ref="form" :model="form" label-width="80px">
         <el-col :span="12">
           <el-form-item label="小区">{{
-              buildInfo && buildInfo.villageName
+            buildInfo && buildInfo.villageName
           }}</el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="楼号">{{
-              buildInfo && buildInfo.buildNo
+            buildInfo && buildInfo.buildNo
           }}</el-form-item>
         </el-col>
 
         <el-col :span="12">
           <el-form-item label="房号">{{
-              buildInfo && buildInfo.roomNo
+            buildInfo && buildInfo.roomNo
           }}</el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="与房屋的关系" label-width="auto">{{
-              buildInfo && buildInfo.relation
+            buildInfo && buildInfo.relation
           }}</el-form-item>
         </el-col>
         <el-col :span="12">
@@ -75,12 +76,12 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="处理状态">{{
-              curInfo.examineStatus
+            curInfo.examineStatus
           }}</el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="处理时间">{{
-              curInfo.examineTime
+            curInfo.examineTime
           }}</el-form-item>
         </el-col>
         <el-form-item label="提交时间">{{ curInfo.commitTime }}</el-form-item>
@@ -92,11 +93,11 @@
 <script>
 import api from "@/utils/request";
 import settleDialog from "@/views/suggestion/component/settleDialog";
-import Pagination from "@/components/Pagination";
+// import Pagination from "@/components/Pagination";
 export default {
   components: {
     settleDialog,
-    Pagination,
+    // Pagination,
   },
   data() {
     return {
@@ -127,6 +128,10 @@ export default {
         (this.pageNum - 1) * 5 + 5
       );
     },
+    handleSizeChange(newSize) {
+      console.log(newSize);
+    },
+    // TODO 后端 /examine/list 新增 分页查询
     getList() {
       api({
         url: "/examine/list",
@@ -220,5 +225,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
