@@ -4,14 +4,14 @@
       <!-- 顶栏区域 -->
       <el-row :gutter="30" style="margin-bottom:20px">
         <el-col :span="3">
-          <el-select v-model="form1.villageName" placeholder="请选择小区">
+          <el-select v-model="searchData.villageName" placeholder="请选择小区">
             <el-option v-for="item in list" :key="item.pid" :label="item.villageName" :value="item.pid">
             </el-option>
           </el-select>
         </el-col>
 
         <el-col :span="3">
-          <el-select v-model="form1.buildNo" placeholder="请选择楼号">
+          <el-select v-model="searchData.buildNo" placeholder="请选择楼号">
             <el-option v-for="item in list" :key="item.pid" :label="item.buildNo" :value="item.pid">
             </el-option>
           </el-select>
@@ -20,19 +20,19 @@
         <!-- TODO 缴交状态 payStatus 字段 -->
         <!-- TODO 后台返回 payStateOption，这里先写死 -->
         <el-col :span="4">
-          <el-select v-model="payStatus" placeholder="请选择缴交状态">
+          <el-select v-model="searchData.payStatus" placeholder="请选择缴交状态">
             <el-option v-for="item in payStateOption" :key="item.id" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
         </el-col>
 
         <el-col :span="5">
-          <el-input v-model="list.name" placeholder="请输入姓名"></el-input>
+          <el-input v-model="searchData.name" placeholder="请输入姓名"></el-input>
         </el-col>
 
         <el-col :span="5">
           <div class="block">
-            <el-date-picker v-model="choiceDate" type="date" placeholder="选择日期">
+            <el-date-picker v-model="searchData.choiceDate" type="date" placeholder="选择日期">
             </el-date-picker>
           </div>
         </el-col>
@@ -581,6 +581,14 @@ export default {
   },
   data() {
     return {
+      // 搜索的数据
+      searchData: {
+        villageName: "",
+        buildNo: "",
+        payStatus: "",
+        name: "",
+        choiceDate: "", // 选择的日期
+      },
       month: 1,
       list: [],
       tableVisable: false,
@@ -589,7 +597,7 @@ export default {
       },
       labelWidth: "120px",
       form1: {
-        buildNo: "",// 楼号
+        buildNo: "", // 楼号
         car: "",
         conditionNumber: "",
         guaranteeType: "",
@@ -599,8 +607,8 @@ export default {
         pid: "",
         remarks: "",
         resident: "",
-        roomNo: "",// 房号
-        villageName: "",// 小区
+        roomNo: "", // 房号
+        villageName: "", // 小区
         relation: "",
         payStatus: "", // TODO 新增字段
         choiceDate: "", // 选择的日期
@@ -623,14 +631,14 @@ export default {
           property: 0, //物业单价
           propertyFee: 0, //物业费
           waterFee: 0, //公摊水费
-          parking1: "", // 停车位 1   // TODO 后台添加字段 
+          parking1: "", // 停车位 1   // TODO 后台添加字段
           parking2: "", // 停车位 2   // TODO 后台添加字段
           otherFee: 0, // 其他费用    // TODO 后台添加字段
         },
       },
       addVisable: false,
       exportVisable: false, // 导出
-      checkField:[],    // 选择导出的字段
+      checkField: [], // 选择导出的字段
       total: 0,
       page: 1,
       pageSize: 5,
@@ -639,12 +647,12 @@ export default {
       // 缴交状态
       payStateOption: [
         {
-          id:0,
+          id: 0,
           value: "已缴交",
           label: "已缴交",
         },
         {
-          id:1,
+          id: 1,
           value: "未缴交",
           label: "未缴交",
         },
@@ -1040,20 +1048,22 @@ export default {
     },
 
     // 重置
-    reset(){
-      console.log('reset')
+    reset() {
+      console.log("reset");
       console.log(this.form1);
-      this.form1.villageName = ""
-      this.form1.buildNo = ""
-      this.form1.payStatus = ""
-      this.list.name = ""
-
-
-    },
-    // 筛选
-    search(){
-      console.log('search')
+      this.searchData.villageName = "";
+      this.searchData.buildNo = "";
+      this.searchData.payStatus = "";
+      this.searchData.name = "";
+      this.searchData.choiceDate = "";
+      // 重新获取数据
       this.getList()
+    },
+
+    // 筛选
+    search() {
+      console.log("search");
+      this.getList();
     },
 
     changePage() {
