@@ -63,7 +63,7 @@
     <!-- v-premission="'build:list'" -->
 
     <!-- 默认展示表格 -->
-    <el-table :data="list" fit highlight-current-row>
+    <el-table :data="list" fit highlight-current-row  border style="margin: 10px;"> 
       <el-table-column align="center" label="序号" width="80">
         <template slot-scope="scope">
           <span v-text="scope.$index + 1" />

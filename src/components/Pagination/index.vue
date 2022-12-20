@@ -3,10 +3,11 @@
     <el-pagination
       :current-page="page"
       :page-size="pageSize"
-      layout="total, prev, pager, next"
+      layout="total, sizes, prev, pager, next"
       :total="total"
       style="text-align:center"
       @current-change="handleCurrentChange"
+      :page-sizes="[5, 10, 15, 20]"
     />
     <!-- <el-pagination
       @current-change="handleCurrentChange"

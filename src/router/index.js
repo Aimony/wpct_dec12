@@ -94,19 +94,19 @@ export const constantRouterMap = [
       }
     ]
   },
-  {
-    path: '/deposit',
-    component: Layout,
-    name: '押金管理',
-    children: [
-      {
-        path: 'pay',
-        name: 'property',
-        component: () => import('@/views/deposit/index'),
-        meta: { title: '押金管理', icon: 'form' }
-      }
-    ]
-  },
+  // {
+  //   path: '/deposit',
+  //   component: Layout,
+  //   name: '押金管理',
+  //   children: [
+  //     {
+  //       path: 'pay',
+  //       name: 'property',
+  //       component: () => import('@/views/deposit/index'),
+  //       meta: { title: '押金管理', icon: 'form' }
+  //     }
+  //   ]
+  // },
   {
     path: '/buildInfo',
     component: Layout,

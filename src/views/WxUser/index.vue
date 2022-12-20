@@ -10,7 +10,7 @@
   <div class="container">
     <div>
       <!-- 表格数据 -->
-      <el-table :data="newArr" fit highlight-current-row height="600px" v-premission="'weixin:list'">
+      <el-table :data="newArr" fit highlight-current-row height="335px" v-premission="'weixin:list'"  border>
         <el-table-column align="center" label="序号">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
@@ -25,19 +25,31 @@
     </div>
 
     <!-- 分页器 -->
-    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.pageNum" :page-size="listQuery.pageRow" :page-sizes="[5, 10, 15, 20]" layout="total, sizes, prev, pager, next, jumper" :total="100" />
-    
+    <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.pageNum" :page-size="listQuery.pageRow" :page-sizes="[5, 10, 15, 20]" layout="total, sizes, prev, pager, next, jumper" :total="100" /> -->
+    <Pagination
+      :page.sync="pageNum"
+      :total="total"
+      :page-size="5"
+      @change="goPage"
+    />
   </div>
 </template>
 
 <script>
 import { getWeixinlistAPI } from "../../api/weixin";
+import Pagination from '@/components/Pagination'
 
 export default {
   name: "index",
+  components: {
+    Pagination,
+  },
   data() {
     return {
       newArr: [],
+      total:'',
+      pageNum:1,
+      pageSize:5,
       listQuery: {
         pageNum: 1, //页码
         pageRow: 10, //每页条数
@@ -130,6 +142,7 @@ export default {
         };
       });
       console.log(this.newArr);
+      this.total = this.newArr.length
     },
     // （每页）条数 改变时
     handleSizeChange(val) {
@@ -138,6 +151,10 @@ export default {
     // 页数 改变时
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+    },
+    goPage(e) {
+      // this.pageNum = e
+      this.getList()
     },
   },
   mounted() {

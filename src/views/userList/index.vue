@@ -9,48 +9,112 @@
 <template>
   <div>
     <div>
-      <el-button type="primary" style="width: 100px; margin: 20px" @click="showDialog" v-premission="'user:add'">新增
+      <el-button
+        type="primary"
+        style="width: 100px; margin: 20px"
+        @click="showDialog"
+        v-premission="'user:add'"
+        >新增
       </el-button>
       <!-- <el-date-picker v-model="value1" type="datetime"  v-premission="'user:list'" placeholder="选择日期时间">
       </el-date-picker> -->
     </div>
-    <el-table :data="userList" fit highlight-current-row>
-      <el-table-column align="center" label="序号" width="80">
-        <template slot-scope="scope">
-          <span v-text="scope.$index + 1" />
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="nickName" label="昵称" width="140" />
-      <el-table-column align="center" prop="id" label="用户ID" width="160" />
-      <el-table-column align="center" prop="updateTime" label="创建日期" width="200" />
-      <el-table-column align="center" prop="roleId" label="roleID" width="200" />
-      <el-table-column align="center" label="详情">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" icon="el-icon-edit" @click="showChange(scope.row)"
-            v-premission="'user:update'">修改</el-button>
-          <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.row)"
-            v-premission="'user:remove'">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="pagenation">
-      <el-pagination background layout="prev, pager, next" @current-change="goPage" @prev-click="backPage"
-        @next-click="nextPage" :total="total" :page-size="5">
-      </el-pagination>
+    <div style="margin: 10px">
+      <el-table
+        :data="userList"
+        fit
+        highlight-current-row
+        border
+        style="height: 334px"
+      >
+        <el-table-column align="center" label="序号" width="80">
+          <template slot-scope="scope">
+            <span v-text="scope.$index + 1" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          align="center"
+          prop="nickName"
+          label="昵称"
+          width="140"
+        />
+        <el-table-column align="center" prop="id" label="用户ID" width="160" />
+        <el-table-column
+          align="center"
+          prop="updateTime"
+          label="创建日期"
+          width="200"
+        />
+        <el-table-column
+          align="center"
+          prop="roleId"
+          label="roleID"
+          width="200"
+        />
+        <el-table-column align="center" label="详情">
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-edit"
+              @click="showChange(scope.row)"
+              v-premission="'user:update'"
+              >修改</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-delete"
+              @click="deleteRow(scope.row)"
+              v-premission="'user:remove'"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
-
+    <!-- <div class="pagenation">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        @current-change="goPage"
+        @prev-click="backPage"
+        @next-click="nextPage"
+        :total="total"
+        :page-size="5"
+      >
+      </el-pagination>
+    </div> -->
+    <Pagination
+      :page.sync="pageNum"
+      :total="total"
+      :page-size="5"
+      @change="goPage"
+    />
     <el-dialog title="新增" :visible.sync="pop.add">
       <el-form :model="userForm" ref="addForm" :rules="rules">
         <!-- <el-form-item label="用户id" :label-width="formLabelWidth" prop="id">
           <el-input v-model.number="userForm.id" autocomplete="off"></el-input>
         </el-form-item> -->
-        <el-form-item label="用户昵称" :label-width="formLabelWidth" prop="nickName">
+        <el-form-item
+          label="用户昵称"
+          :label-width="formLabelWidth"
+          prop="nickName"
+        >
           <el-input v-model="userForm.nickName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="用户名" :label-width="formLabelWidth" prop="userName">
+        <el-form-item
+          label="用户名"
+          :label-width="formLabelWidth"
+          prop="userName"
+        >
           <el-input v-model="userForm.userName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
+        <el-form-item
+          label="密码"
+          :label-width="formLabelWidth"
+          prop="password"
+        >
           <el-input v-model="userForm.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="roleId" :label-width="formLabelWidth">
@@ -68,13 +132,25 @@
         <el-form-item label="用户id" :label-width="formLabelWidth" prop="id">
           <el-input v-model="userForm.id" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="用户昵称" :label-width="formLabelWidth" prop="nickName">
+        <el-form-item
+          label="用户昵称"
+          :label-width="formLabelWidth"
+          prop="nickName"
+        >
           <el-input v-model="userForm.nickName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="用户名" :label-width="formLabelWidth" prop="userName">
+        <el-form-item
+          label="用户名"
+          :label-width="formLabelWidth"
+          prop="userName"
+        >
           <el-input v-model="userForm.userName" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
+        <el-form-item
+          label="密码"
+          :label-width="formLabelWidth"
+          prop="password"
+        >
           <el-input v-model="userForm.password" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="roleId" :label-width="formLabelWidth">
@@ -90,6 +166,7 @@
 </template>
 
 <script>
+import Pagination from '@/components/Pagination'
 import { toASCII } from 'punycode'
 import {
   getUserList,
@@ -98,6 +175,9 @@ import {
   addUserList,
 } from '../../api/myuser'
 export default {
+  components: {
+    Pagination,
+  },
   data() {
     return {
       rules: {
@@ -109,8 +189,15 @@ export default {
         userName: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
         ],
-        password: [{ required: true, message: '请输入密码', trigger: 'blur' },
-        { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          {
+            min: 6,
+            max: 16,
+            message: '长度在 6 到 16 个字符',
+            trigger: 'blur',
+          },
+        ],
       },
       pageNum: 1,
       total: 0,
@@ -267,7 +354,7 @@ export default {
       this.getList()
     },
     goPage(e) {
-      this.pageNum = e
+      // this.pageNum = e
       this.getList()
     },
   },

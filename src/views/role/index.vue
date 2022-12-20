@@ -8,12 +8,24 @@
 -->
 <template>
   <div>
-    <h3 style="padding: 20px; padding-bottom: 0px">角色列表</h3>
     <el-row>
-      <el-button type="primary" style="width: 120px; margin: 20px" @click="showAdd" v-premission="'role:add'">新增
+      <el-button
+        type="primary"
+        style="width: 120px; margin: 20px"
+        @click="showAdd"
+        v-premission="'role:add'"
+        >新增
       </el-button>
     </el-row>
-    <el-table :data="stuList" fit highlight-current-row v-premission="'role:list'">
+   <div style="margin: 10px;">
+    <el-table
+      :data="stuList"
+      fit
+      highlight-current-row
+      v-premission="'role:list'"
+      border
+      style="height:500px"
+    >
       <el-table-column align="center" label="序号" width="80">
         <template slot-scope="scope">
           <span v-text="scope.$index + 1" />
@@ -21,38 +33,92 @@
       </el-table-column>
       <!-- <el-table-column align="center" prop="users[0].nickName" label="昵称" width="140" />
       <el-table-column align="center" prop="users[0].id" label="用户ID" width="160" /> -->
-      <el-table-column align="center" prop="roleName" label="身份" width="250" />
-      <el-table-column align="center" prop="roleId" label="roleID" width="200" />
+      <el-table-column
+        align="center"
+        prop="roleName"
+        label="身份"
+        width="250"
+      />
+      <el-table-column
+        align="center"
+        prop="roleId"
+        label="roleID"
+        width="200"
+      />
       <el-table-column align="center" label="详情">
         <template slot-scope="scope">
-          <el-button type="text" size="small" icon="el-icon-tickets" @click="showDetail(scope.row)"
-            v-premission="'role:list'">查看</el-button>
-          <el-button type="text" size="small" icon="el-icon-delete" @click="deleteRow(scope.row)"
-            v-premission="'role:remove'">删除</el-button>
+          <el-button
+            type="text"
+            size="small"
+            icon="el-icon-tickets"
+            @click="showDetail(scope.row)"
+            v-premission="'role:list'"
+            >查看</el-button
+          >
+          <el-button
+            type="text"
+            size="small"
+            icon="el-icon-delete"
+            @click="deleteRow(scope.row)"
+            v-premission="'role:remove'"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
+   </div>
     <!-- <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox> -->
-    <el-pagination layout="total,prev, pager, next" style="text-align: center" :total="total"
-      @current-change="handleCurrentChange" :current-page.sync="pageNum" :page-size="pageSize" />
+    <el-pagination
+      layout="total,prev, pager, next"
+      style="text-align: center"
+      :total="total"
+      @current-change="handleCurrentChange"
+      :current-page.sync="pageNum"
+      :page-size="pageSize"
+    />
 
-    <el-dialog title="新增" :visible.sync="add" width="60%" append-to-body :before-close="handleClose1">
+    <el-dialog
+      title="新增"
+      :visible.sync="add"
+      width="60%"
+      append-to-body
+      :before-close="handleClose1"
+    >
       <el-form :model="roleForm" :rules="rules" ref="form">
-        <el-form-item label="角色名称" :label-width="formLabelWidth" prop="roleName">
+        <el-form-item
+          label="角色名称"
+          :label-width="formLabelWidth"
+          prop="roleName"
+        >
           <el-col :span="24">
             <el-input v-model="roleForm.roleName" autocomplete="off"></el-input>
           </el-col>
         </el-form-item>
         <el-form-item label="角色权限" :label-width="formLabelWidth">
-          <el-switch v-model="isAdmin" active-color="#13ce66" inactive-color="#ff4949" inactive-text="取消全选"
-            active-text="全选">
+          <el-switch
+            v-model="isAdmin"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            inactive-text="取消全选"
+            active-text="全选"
+          >
           </el-switch>
           <div class="roleList" v-show="!isAdmin">
-            <el-checkbox-group v-model="checkedRoleList" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="(items, index) in roleList" :label="items.id" :key="index + items.menuName"
-                style="width: 20%" :checked="items.requiredPermission == 1" v-show="items.menuCode !== 'admin'"
-                :disabled="items.requiredPermission == 1">
-                {{ items.menuName + items.permissionName }}</el-checkbox>
+            <el-checkbox-group
+              v-model="checkedRoleList"
+              @change="handleCheckedCitiesChange"
+            >
+              <el-checkbox
+                v-for="(items, index) in roleList"
+                :label="items.id"
+                :key="index + items.menuName"
+                style="width: 20%"
+                :checked="items.requiredPermission == 1"
+                v-show="items.menuCode !== 'admin'"
+                :disabled="items.requiredPermission == 1"
+              >
+                {{ items.menuName + items.permissionName }}</el-checkbox
+              >
             </el-checkbox-group>
           </div>
         </el-form-item>
@@ -63,7 +129,12 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="提示" :visible.sync="pop.show" width="70%" :before-close="handleClose">
+    <el-dialog
+      title="提示"
+      :visible.sync="pop.show"
+      width="70%"
+      :before-close="handleClose"
+    >
       <div class="role">
         <span>拥有的路由权限:</span>
         <div v-for="(item, index) in menus" :key="index">
@@ -77,7 +148,7 @@
         <span>拥有的页面权限:</span>
         <div v-for="(item, index) in permissions" :key="index">
           <span style="width: 100px; padding: 20px">{{
-              item.permissionName
+            item.permissionName
           }}</span>
         </div>
       </div>
@@ -101,7 +172,9 @@ export default {
     return {
       stuList: [],
       rules: {
-        roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+        roleName: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' },
+        ],
       },
       total: 0,
       pageNum: 1,
@@ -206,10 +279,10 @@ export default {
       })
     },
     handleClose() {
-      ; (this.pop.add = false), (this.pop.show = false)
+      ;(this.pop.add = false), (this.pop.show = false)
     },
     showDetail(row) {
-      ; (this.menus = [...row.menus]), (this.permissions = [...row.permissions])
+      ;(this.menus = [...row.menus]), (this.permissions = [...row.permissions])
       this.pop.show = true
     },
     deleteRow(row) {
@@ -292,7 +365,6 @@ export default {
           this.getList()
           this.add = false
         }
-
       })
     },
   },

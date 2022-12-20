@@ -44,7 +44,8 @@
     </div>
 
     <!--    展示列表  v-premission="'bill:list'"-->
-    <el-table :data="list" v-loading="listLoading" highlight-current-row>
+ <div style="margin: 10px;">
+  <el-table :data="list" v-loading="listLoading" highlight-current-row border >
       <el-table-column align="center" label="序号" width="80">
         <template v-slot:="scope">{{ scope.$index + 1 }}</template>
       </el-table-column>
@@ -53,7 +54,7 @@
       <el-table-column align="center" prop="roomNo" label="小区楼号房号" width="160" />
       <el-table-column align="center" prop="payEndTime" label="处理时间" width="160" />
       <el-table-column align="center" prop="consumption.monthCost" label="缴费金额" width="160" />
-      <el-table-column align="center" label="操作" width="250">
+      <el-table-column align="center" label="操作" >
         <template slot-scope="scope">
           <el-button type="text" size="small" icon="el-icon-tickets" @click="showDetail(scope.row)" v-premission="'bill:list'">查看</el-button>
           <el-button type="text" size="small" icon="el-icon-edit" @click="showChange(scope.row)" v-premission="'bill:update'">修改</el-button>
@@ -61,6 +62,7 @@
         </template>
       </el-table-column>
     </el-table>
+ </div>
 
     <Pagination :total="total" :page.sync="page" :page-size="pageSize" @change="changePage" />
     <!--    分页器-->
