@@ -1,6 +1,47 @@
 <template>
   <div class="app-container">
 
+    <div class="header">
+      <!-- 顶栏区域 -->
+      <el-row :gutter="20" style="margin-bottom:20px">
+        <el-col :span="3">
+          <el-select v-model="searchData.buildNo" placeholder="请选择楼号">
+            <el-option v-for="item in list" :key="item.pid" :label="item.buildNo" :value="item.pid">
+            </el-option>
+          </el-select>
+        </el-col>
+
+        <el-col :span="3">
+          <el-select v-model="searchData.roomNo" placeholder="请选择房号">
+            <el-option v-for="item in list" :key="item.pid" :label="item.roomNo" :value="item.pid">
+            </el-option>
+          </el-select>
+        </el-col>
+
+        <el-col :span="4">
+          <el-input v-model="searchData.orderNo" placeholder="请输入订单号"></el-input>
+        </el-col>
+
+        <el-col :span="4">
+          <el-input v-model="searchData.name" placeholder="请输入缴费人姓名"></el-input>
+        </el-col>
+
+        <el-col :span="5">
+          <div class="block">
+            <el-date-picker v-model="searchData.choiceDate" type="date" placeholder="选择日期">
+            </el-date-picker>
+          </div>
+        </el-col>
+
+        <el-col :span="4">
+          <div class="menu">
+            <el-button @click="reset">重置</el-button>
+            <el-button type="primary" @click="search">搜索</el-button>
+          </div>
+        </el-col>
+
+      </el-row>
+    </div>
 
     <!--    展示列表  v-premission="'bill:list'"-->
     <el-table :data="list" v-loading="listLoading" highlight-current-row>
@@ -14,32 +55,27 @@
       <el-table-column align="center" prop="consumption.monthCost" label="缴费金额" width="160" />
       <el-table-column align="center" label="操作" width="250">
         <template slot-scope="scope">
-          <el-button type="text" size="small" icon="el-icon-tickets" @click="showDetail(scope.row)"
-            v-premission="'bill:list'">查看</el-button>
-          <el-button type="text" size="small" icon="el-icon-edit" @click="showChange(scope.row)"
-            v-premission="'bill:update'">修改</el-button>
-          <el-button type="text" size="small" icon="el-icon-delete" @click="deleteBill(scope.row)"
-            v-premission="'bill:remove'">删除</el-button>
-
+          <el-button type="text" size="small" icon="el-icon-tickets" @click="showDetail(scope.row)" v-premission="'bill:list'">查看</el-button>
+          <el-button type="text" size="small" icon="el-icon-edit" @click="showChange(scope.row)" v-premission="'bill:update'">修改</el-button>
+          <el-button type="text" size="small" icon="el-icon-delete" @click="deleteBill(scope.row)" v-premission="'bill:remove'">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <Pagination :total="total" :page.sync="page" :page-size="pageSize" @change="changePage" />
     <!--    分页器-->
-    <div style="padding:20px" class="pagePosition">
+    <div style="padding: 20px" class="pagePosition">
       <el-row>
-        <el-button size="medium" type="primary" style="width:100px" @click="pop.add = true" v-premission="' bill:add'">
+        <el-button size="medium" type="primary" style="width: 100px" @click="pop.add = true" v-premission="' bill:add'">
           新增</el-button>&nbsp;
-        <el-button size="medium" type="primary" style="width:100px" @click="backMouth">上一月</el-button>
+        <el-button size="medium" type="primary" style="width: 100px" @click="backMouth">上一月</el-button>
         当前{{ month }}月
-        <el-button size="medium" type="primary" style="width:100px" @click="nextMouth">下一月</el-button>
-        <el-button size="medium" type="primary" style="width:100px" @click="this.getlist">刷新</el-button>
+        <el-button size="medium" type="primary" style="width: 100px" @click="nextMouth">下一月</el-button>
+        <el-button size="medium" type="primary" style="width: 100px" @click="this.getlist">刷新</el-button>
       </el-row>
     </div>
     <!--    详情对话框-->
     <el-dialog title="详情" :visible.sync="pop.show" width="70%" modal-append-to-body>
-
       <el-form :model="form" ref="show">
         <el-col :span="12">
           <el-form-item label="小区">
@@ -694,7 +730,13 @@
   </div>
 </template>
 <script>
-import { getBillListAPI, deleteBillAPI, addBillItem, updateBillItem } from "../../api/bill";
+import { get } from 'js-cookie';
+import {
+  getBillListAPI,
+  deleteBillAPI,
+  addBillItem,
+  updateBillItem,
+} from "../../api/bill";
 import Pagination from "../../components/Pagination";
 export default {
   name: "index",
@@ -703,13 +745,13 @@ export default {
   },
   data() {
     return {
-      labelWidth: '80px',
+      labelWidth: "80px",
       pop: {
         show: false,
         add: false,
-        update: false
+        update: false,
       },
-      labera: '80px',
+      labera: "80px",
       month: 1,
       total: 0,
       pageSize: 10,
@@ -718,70 +760,79 @@ export default {
       detailDialogVisible: false,
       list: [], //表格的数据
       listLoading: false, //数据加载等待动画
-      form: {//表单
-        buildNo: '',
-        car: '',
-        conditionNumber: '',
-        guaranteeType: '',//
-        name: '',
-        number: '',
-        personNumber: '',
-        pid: '',
-        remarks: '',
-        resident: '',
-        roomNo: '',
-        villageName: '',
-        relation: '',
+      // 搜索数据
+      searchData: {
+        name: "",
+        orderNo: "", // 订单号
+        buildNo: "",
+        roomNo: "",
+        handleTime: "", // 处理时间
+      },
+      form: {
+        //表单
+        buildNo: "",
+        car: "",
+        conditionNumber: "",
+        guaranteeType: "", //
+        name: "",
+        number: "",
+        personNumber: "",
+        pid: "",
+        remarks: "",
+        resident: "",
+        roomNo: "",
+        villageName: "",
+        relation: "",
         consumption: {
-          afee: '',
-          area: '',
-          areaFee: '',
-          bfee: '',
-          carFee: '',
-          cfee: '',
-          deposit: '',
-          dfee: '',
-          discount: '',
-          electricity: '',
-          gasFee: '',
-          limitArea: '',
-          monthCost: '',
-          overArea: '',
-          overareaFee: '',
-          property: '',
-          propertyFee: '',
-          waterFee: '',
+          afee: "",
+          area: "",
+          areaFee: "",
+          bfee: "",
+          carFee: "",
+          cfee: "",
+          deposit: "",
+          dfee: "",
+          discount: "",
+          electricity: "",
+          gasFee: "",
+          limitArea: "",
+          monthCost: "",
+          overArea: "",
+          overareaFee: "",
+          property: "",
+          propertyFee: "",
+          waterFee: "",
           gwaterFee: 0,
           liftFee: 0,
-        }
+        },
       },
       carOption: [
         {
-          value: '汽车',
-          label: '汽车'
+          value: "汽车",
+          label: "汽车",
         },
         {
-          value: '摩托车',
-          label: '摩托车'
-        }
+          value: "摩托车",
+          label: "摩托车",
+        },
       ],
       houseOption: [
         {
-          value: '户主',
-          label: '户主'
+          value: "户主",
+          label: "户主",
         },
         {
-          value: '亲属',
-          label: '亲属'
+          value: "亲属",
+          label: "亲属",
         },
         {
-          value: '租户',
-          label: '租户'
+          value: "租户",
+          label: "租户",
         },
         {
-          value: '其他',
-          label: '其他'
-        }
+          value: "其他",
+          label: "其他",
+        },
       ],
     };
   },
@@ -791,15 +842,15 @@ export default {
   methods: {
     // 获取列表
     async getlist() {
-      this.listLoading = true
+      this.listLoading = true;
       const { data } = await getBillListAPI({
         pageNum: this.page,
-        month: this.month
+        month: this.month,
       });
-      this.listLoading = false
+      console.log(data);
+      this.listLoading = false;
       this.list = data.data.list;
       this.total = data.data.total;
-
     },
     //删除
     deleteBill(row) {
@@ -808,26 +859,27 @@ export default {
         distinguishCancelAndClose: true,
         confirmButtonText: "删除",
         cancelButtonText: "取消",
+        type: "warning",
       })
         .then(async () => {
           await deleteBillAPI({
             payinfoId: row.payinfoId,
             orderNo: row.orderNo,
           }).then(
-            res => {
+            (res) => {
               this.getlist();
               this.$message({
                 type: "success",
                 message: res.data.data,
               });
             },
-            err => {
+            (err) => {
               this.$message({
                 type: "error",
                 message: res.data.data,
               });
             }
-          )
+          );
         })
         .catch((action) => {
           this.$message({
@@ -838,79 +890,94 @@ export default {
     },
     //查看
     showDetail(row) {
-      this.form = { ...row }
-      this.pop.show = true
+      this.form = { ...row };
+      this.pop.show = true;
     },
     //新增
     submit(e) {
-      console.log(e)
+      console.log(e);
       addBillItem(this.form).then(
-        res => {
-          this.getlist()
+        (res) => {
+          this.getlist();
           this.$message({
             type: "success",
             message: res.data.data,
           });
-        }, err => {
+        },
+        (err) => {
           this.$message({
             type: "error",
             message: res.data.data,
           });
         }
-      )
-      this.pop.add = false
+      );
+      this.pop.add = false;
       // console.log(this.form)
       this.$refs[e].resetFields();
     },
     //修改
     upadteBill(e) {
       updateBillItem(this.form).then(
-        res => {
-          this.getlist()
+        (res) => {
+          this.getlist();
           this.$message({
             type: "success",
             message: res.data.data,
           });
-        }, err => {
+        },
+        (err) => {
           this.$message({
             type: "error",
             message: res.data.data,
           });
         }
-      )
-      this.pop.update = false
+      );
+      this.pop.update = false;
       this.$refs[e].resetFields();
     },
     changePage() {
       this.getlist();
     },
     closeDialog() {
-      this.pop.show = false
-      this.pop.add = false
-      this.pop.update = false
+      this.pop.show = false;
+      this.pop.add = false;
+      this.pop.update = false;
     },
     //上一个月
     nextMouth() {
       if (this.month >= 12) {
-        return this.$message.error('已经最大月份' + this.month + '月了')
+        return this.$message.error("已经最大月份" + this.month + "月了");
       } else {
-        this.month++
-        this.getlist()
+        this.month++;
+        this.getlist();
       }
     },
     //下一个月
     backMouth() {
       if (this.month <= 1) {
-        return this.$message.error('已经最小月份' + this.month + '月了')
+        return this.$message.error("已经最小月份" + this.month + "月了");
       } else {
-        this.month--
-        this.getlist()
+        this.month--;
+        this.getlist();
       }
     },
     showChange(row) {
-      this.form = { ...row }
-      this.pop.update = true
-    }
+      this.form = { ...row };
+      this.pop.update = true;
+    },
+    // TODO 重置 
+    reset() {
+      this.searchData.name = "",
+      this.searchData.orderNo = "",
+      this.searchData.buildNo = "",
+      this.searchData.roomNo = "",
+      this.searchData.handleTime = ""
+      this.getlist()
+    },
+    // TODO 搜索
+    search() {
+      this.getlist()
+    },
   },
 };
 </script>
